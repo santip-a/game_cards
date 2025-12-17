@@ -164,7 +164,8 @@ onMounted(() => {
 
 .main {
   height: 100svh;
-  width: 100%;
+  /* width: 100%; */
+  max-width: 1000px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
