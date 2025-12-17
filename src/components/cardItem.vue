@@ -88,8 +88,7 @@ watch(
   /* лишнее (если вдруг) не покажем */
   width: 100%;
   height: 100%;
-  /* aspect-ratio: 3 / 4; */
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 3 / 4;
   /* сохраняем пропорцию карточки */
   border: 4px solid rgb(0, 17, 255);
   border-radius: 16px;
