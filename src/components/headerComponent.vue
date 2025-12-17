@@ -2,6 +2,8 @@
 import { ref, watch } from 'vue';
 import Popup from '@/components/PopupComponent.vue';
 
+const BASE_URL = import.meta.env.BASE_URL
+
 const props = defineProps({
   step: Number,
   quantityOpenCard: Number,
@@ -70,32 +72,33 @@ const pickNumber = createRandomPicker(numbers1to26);
 
 // Подгружаем картинку до открытия попапа
 function preloadImage(src) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const img = new Image()
     img.src = src
-    img.onload = resolve
-    img.onerror = reject
+    img.onload = () => resolve(true)
+    img.onerror = () => resolve(false) // ❗ никогда reject
   })
 }
 
 watch(() => props.quantityOpenCard, async () => {
   if (props.quantityOpenCard >= props.arrCardMix.length / 2) {
     const number = pickNumber()
-    const src = `/popup/${number}.webp`
+    const src = `${BASE_URL}popup/${number}.webp`
 
     imageLoaded.value = false
     imageNumber.value = number
 
-    await preloadImage(src)   // ⬅️ ВОТ КЛЮЧ
+    const loaded = await preloadImage(src)
+    if (!loaded) return
 
     imageLoaded.value = true
     isOpen.value = true
   }
 })
 
-watch(isOpen, (val) => {
-  if (val) imageLoaded.value = false
-})
+// watch(isOpen, (val) => {
+//   if (val) imageLoaded.value = false
+// })
 
 </script>
 
@@ -117,8 +120,7 @@ watch(isOpen, (val) => {
       <div class="img-wrapper">
         <div v-if="!imageLoaded" class="loader">Загрузка...</div>
         <!-- <img  v-show="imageLoaded" class="img" :src="`/popup/${imageNumber}.webp`" alt="" @load="imageLoaded = true"> -->
-        <img v-if="imageNumber" v-show="imageLoaded" class="img" :src="`/popup/${imageNumber}.webp`"
-          @load="imageLoaded = true">
+        <img v-if="imageLoaded" class="img" :src="`${BASE_URL}popup/${imageNumber}.webp`" >
       </div>
 
     </Popup>
