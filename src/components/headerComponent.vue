@@ -42,27 +42,30 @@ function declinateSteps(number = props.step) {
 }
 
 // функция исключения дублирования картинок в попапе
-function createRandomPicker() {
-  let numbers = Array.from({ length: 16 }, (_, i) => i + 1); // [1, 2, ..., 16]
+function createRandomPicker(originalArray) {
+  // Создаём копию исходного массива, чтобы не изменять оригинал
+  let source = [...originalArray];
+  let current = [...originalArray];
 
-  return function getRandomNumber() {
-    // Если числа закончились — заполняем массив заново
-    if (numbers.length === 0) {
-      numbers = Array.from({ length: 16 }, (_, i) => i + 1);
+  return function pick() {
+    // Если текущий массив закончился — восстанавливаем его из исходного
+    if (current.length === 0) {
+      current = [...source];
     }
 
     // Выбираем случайный индекс
-    const randomIndex = Math.floor(Math.random() * numbers.length);
+    const randomIndex = Math.floor(Math.random() * current.length);
 
-    // Берём число и удаляем его из массива
-    const selected = numbers[randomIndex];
-    numbers.splice(randomIndex, 1);
+    // Берём элемент и удаляем его из массива
+    const element = current.splice(randomIndex, 1)[0];
 
-    return selected;
+    return element;
   };
 }
+
+const numbers1to26 = Array.from({ length: 26 }, (_, i) => i + 1);
 // Создаём функцию-генератор
-const pickNumber = createRandomPicker();
+const pickNumber = createRandomPicker(numbers1to26);
 
 
 // Подгружаем картинку до открытия попапа
@@ -107,14 +110,14 @@ watch(isOpen, (val) => {
       <h3>найдено {{ quantityOpenCard }} / {{ props.arrCardMix.length / 2 }}</h3>
     </div>
 
-    <Popup v-model="isOpen" title="Давай ещё?" :onMix="onMix"  >
+    <Popup v-model="isOpen" title="Давай ещё?" :onMix="onMix">
       <h2 class="popup__title">Ай молодец какой 👋</h2>
       <p class="popup__subtitle">Ты разгадал за {{ declinateSteps() }}</p>
 
       <div class="img-wrapper">
         <div v-if="!imageLoaded" class="loader">Загрузка...</div>
         <!-- <img  v-show="imageLoaded" class="img" :src="`/popup/${imageNumber}.webp`" alt="" @load="imageLoaded = true"> -->
-        <img  v-if="imageNumber" v-show="imageLoaded" class="img" :src="`/popup/${imageNumber}.webp`"
+        <img v-if="imageNumber" v-show="imageLoaded" class="img" :src="`/popup/${imageNumber}.webp`"
           @load="imageLoaded = true">
       </div>
 
@@ -173,11 +176,17 @@ h1 {
 
 
 .img {
-  margin-bottom: 20px;
+  margin: 0 auto 20px;
 }
 
 .header {
   flex: 0 0 120px;
   overflow: hidden;
+}
+
+.img-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
