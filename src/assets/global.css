@@ -1,0 +1,22 @@
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: rgb(243, 254, 255);
+  /* Чтобы все вложенные flex‑контейнеры корректно измеряли 100% */
+  box-sizing: border-box;
+}
+
+/* Отключаем любой скролл у корня */
+html,
+body {
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Переменная с высотой шапки – можно менять в одном месте */
+:root {
+  --header-height: 120px;   /* то же значение, что в .header {flex:0 0 120px;} */
+}
